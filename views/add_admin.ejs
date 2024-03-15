@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Manage Admin</title>
+    <%- include("headerfiles") %>
+</head>
+
+<body onload="fetchAdmins()">
+<%- include("adminheader") %>
+<div class="container mt-4">
+    <h1> Manage Admin </h1>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"> Add Admin
+    </button>
+
+    <div id="output"></div>
+    <div class="modal fade" id="addModal" tabindex="-1" arial-labelledby="exampleModalLabel" arial-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"> Add New Admin</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" arial-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+                    <form id="form">
+                        <div class="row">
+                            <div class="col-md-6 mt-2">
+                                <label for="username"> Enter Username: </label>
+                                <input type="text" id="username" name="username" class="form-control" required
+                                       data-msg-required="Username is required"/>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="password"> Enter Password: </label>
+                                <input type="password" id="password" name="password" minlength="4" maxlength="15"
+                                       id="password" class="form-control" required
+                                       data-msg-required="password is required "/>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="cpass">Confirm Password:</label>
+                                <input type="password" name="cpass" id="cpass" class="form-control"
+                                       data-rule-required="true"
+                                       data-rule-equalto="#password"/>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="name"> Enter Full Name: </label>
+                                <input type="text" id="fname" name="fname" class="form-control"
+                                       data-rule-required="true"/>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="phone"> Enter Phone No. :</label>
+                                <input type="tel" name="phone" id="phone" class="form-control"/>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="email"> Enter Email: </label>
+                                <input type="email" id="email" name="email" class="form-control" required
+                                       data-msg-required="Email is required"/>
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <label for="admin"> Select Admin type:</label>
+                                <select name="admin" id="admin" class="form-select">
+                                    <option selected> select admin type here</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="subadmin">Sub Admin</option>
+                                </select>
+
+                            </div>
+                            <div class="col-md-6 mt-2">
+                                <br/>
+                                <button type="button" onclick="signup()" class="btn btn-primary btn-lg form -control">
+                                    SUBMIT
+                                </button>
+                                <div id="output"></div>
+                            </div>
+                        </div>
+
+                    </form>
+                    <div id="response"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+
+<%- include("footer") %>
+<%- include("footer-scripts") %>
+<script src="/dist/jquery.validate.js"></script>
+<script>
+    let signup = () => {
+        $("form").validate();
+        if ($("form").valid()) {
+            var ele = document.getElementById("form").elements;
+            let formData = new FormData();
+            for(let i=0;i<ele.length;i++){
+                if(ele[i].type!== "button"){
+                    formData.append(ele[i].name,ele[i].value);
+                }
+            }
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    if (this.response === "inserted") {
+                        document.getElementById("form").reset();
+                        // document.getElementById("output").innerHTML = "admin added successfully";
+                        alert("Admin added successfully");
+                        fetchAdmins()
+                    }
+                    else
+                        alert("Row not inserted");
+                }
+            }
+            http.open("post", "/admin/add_adminaction", true);
+            http.send(formData);
+        }
+    }
+    let fetchAdmins = () => {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                let output = `<table class='table mt-5'>
+<thead>
+<tr class="text-center">
+<th>Sr. No.</th>
+<th>Username</th>
+<th>Full Name</th>
+<th>Phone No.</th>
+<th>Email Id</th>
+<th>Admin Type</th>
+</tr>
+</thead><tbody>`
+                var rows = JSON.parse(this.response);
+                console.log(rows)
+                for (let i = 0; i < rows.length; i++) {
+                    output += `<tr class="text-center">
+<td>${i + 1}</td>
+<td>${rows[i].username}</td>
+<td>${rows[i].fullname}</td>
+<td>${rows[i].phone}</td>
+<td>${rows[i].email}</td>
+<td>${rows[i].admintype}</td>
+</tr>`;
+                }
+                output += `</tbody></table>`;
+                document.getElementById("output").innerHTML = output;
+            }
+        }
+        http.open("get", "/admin/fetch-admin", true);
+        http.send();
+    }
+</script>
+
+</body>
+</html>

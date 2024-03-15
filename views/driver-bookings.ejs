@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include("headerfiles") %>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body onload="my_booking()">
+<%- include("driversheader") %>
+
+<div class="container">
+    <h2>My Bookings</h2>
+
+    <div class="container">
+        <div id="output"></div>
+    </div>
+</div>
+<%-include("footer")%>
+<%-include("footer-scripts")%>
+<script>
+    function my_booking(){
+        var http =new XMLHttpRequest();
+        http.onreadystatechange = function (){
+            if(this.readyState ==4 && this.status == 200){
+                // alert(this.response);
+                if(this.response!="zero"){
+                    var data = JSON.parse(this.response);
+                    var output = `<table class="table"><thead>
+<tr class="text-center">
+<th>#</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Pick Up From</th>
+<th>Drop To</th>
+<th>Pick Up Time</th>
+<th>No. of Passengers</th>
+<th>Car Type</th>
+<th>Message</th>
+</tr>
+</thead><tbody>`;
+                    for (let i = 0; i < data.length; i++) {
+                        output += `<tr class="text-center">
+<td>${i + 1}</td>
+<td>${(data[i].name).toUpperCase()}</td>
+<td>${(data[i].phone)}</td>
+<td>${(data[i].pickup_from)}</td>
+<td>${(data[i].drop_address)}</td>
+<td>${(data[i].pick_up_time)}</td>
+<td>${(data[i].no_passemgers)}</td>
+<td>${(data[i].cab_type)}</td>
+<td>${(data[i].message)}</td>`;
+
+                        output+=`</tr>`;
+                    }
+                    output += `</tbody></table>`;
+                    document.getElementById("output").innerHTML = output;
+                }
+                else{
+                    document.getElementById("output").innerHTML = "<div class='alert alert-danger'>No bookings for today</div>";
+                }
+            }
+        }
+        http.open("get","/drivers/driver-booking",true);
+        http.send();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include("headerfiles") %>
+    <title>Document</title>
+</head>
+<body onload="today_booking()">
+<%- include("adminheader") %>
+
+<div class="container mb-5">
+    <h2>View Daily Orders</h2>
+    <div id="output" class="mt-5"></div>
+</div>
+<div class="modal fade" id="addModal" tabindex="-1" arial-labelledby="exampleModalLabel" arial-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Assign driver to booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" arial-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                    <label for="driver">Select Driver</label>
+                    <input type="hidden" id="bookid" name="bookid"/>
+                    <div class="row mb-3">
+                        <div class="col-lg-8 offset-lg-2">
+                            <div id="drivers"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-8 offset-lg-2">
+                            <button class="btn btn-primary" type="button" onclick="assign_driver()">Submit</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("footer") %>
+<%- include("footer-scripts") %>
+<script src="/dist/jquery.validate.js"></script>
+<script>
+    function today_booking() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.response != "zero") {
+                    var data = JSON.parse(this.response);
+                    var output = `<table class="table"><thead>
+<tr class="text-center">
+<th>#</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Pick Up From</th>
+<th>Drop To</th>
+<th>Pick Up Time</th>
+<th>No. of Passengers</th>
+<th>Car Type</th>
+<th>Message</th>
+<th>Assign</th>
+</tr>
+</thead><tbody>`;
+                    for (let i = 0; i < data.length; i++) {
+                        output += `<tr class="text-center">
+<td>${i + 1}</td>
+<td>${(data[i].name).toUpperCase()}</td>
+<td>${(data[i].phone)}</td>
+<td>${(data[i].pickup_from)}</td>
+<td>${(data[i].drop_address)}</td>
+<td>${(data[i].pick_up_time)}</td>
+<td>${(data[i].no_passemgers)}</td>
+<td>${(data[i].cab_type)}</td>
+<td>${(data[i].message)}</td>`;
+                        if (data[i].driver ==null){
+                            output += `<td><button onclick="get_driver(${data[i].book_id})" type="button" class="btn btn-primary">Assign</button> </td>`;
+                        }
+                        else{
+                            output += `<td>Assigned</td>`;
+                        }
+                        output+=`</tr>`;
+                    }
+                    output += `</tbody></table>`;
+                    document.getElementById("output").innerHTML = output;
+                } else {
+                    document.getElementById("output").innerHTML = "<div class='alert alert-danger'>No bookings for today</div>";
+                }
+            }
+        }
+        http.open("get", "/admin/today_booking", true);
+        http.send();
+    }
+
+    function get_driver(bookid) {
+        // alert(bookid);
+        document.getElementById("bookid").value = bookid;
+        $("#addModal").modal("show");
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.response != "zero") {
+                    var data = JSON.parse(this.response);
+                    var output = `<select name="driver" id="driver" class="form-control" required data-msg-required="Driver is required">
+<option value=''>Select:</option>`;
+                    for (let i = 0; i < data.length; i++) {
+                        output += `<option value="${data[i].email}">${data[i].driver} (${data[i].email})</option>`;
+                    }
+                    output += `</select>`;
+                    document.getElementById("drivers").innerHTML = output;
+                }
+            }
+        }
+        http.open("get", "/admin/getdrivers", true);
+        http.send();
+    }
+    function assign_driver(){
+        $("#form").validate();
+        if($("#form").valid()){
+            var bookid=document.getElementById("bookid").value;
+            var driver =document.getElementById("driver").value;
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function (){
+                if(this.readyState ==4 && this.status == 200){
+                    if(this.response == "updated"){
+                        $("#addModal").modal("hide");
+                        today_booking();
+                    }
+                }
+            }
+            http.open("get","/admin/update-booking?id="+bookid+"&d="+driver,true);
+            http.send();
+        }
+
+    }
+</script>
+
+</body>
+</html>

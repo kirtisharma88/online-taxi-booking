@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Taxica - Book a ride</title>
+    <%- include('headerfiles') %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body onload="car_type();carmodel();get_user();get_cities();">
+<%- include('userheader') %>
+
+<main class="main">
+
+    <div class="site-breadcrumb" style="background: url(/assets/img/breadcrumb/01.jpg)">
+        <div class="container">
+            <h2 class="breadcrumb-title">Book A Ride</h2>
+            <ul class="breadcrumb-menu">
+                <li><a href="/user/">Home</a></li>
+                <li class="active">Book A Ride</li>
+            </ul>
+        </div>
+    </div>
+    <div class="book-ride py-120">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 mx-auto">
+                    <div class="booking-form">
+                        <div class="book-ride-head">
+                            <h4 class="booking-title">Make Your Booking Today</h4>
+                        </div>
+                        <form id="form">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Full Name </label> <span class="error">*</span>
+                                        <input type="text" class="form-control" id="fullname" name="fullname"
+                                               placeholder="Your Name" required
+                                               data-msg-required="Full Name is required">
+                                        <i class="far fa-user"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Phone Number</label><span class="error">*</span>
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                               placeholder="Your Phone" required
+                                               data-msg-required="Phone No. is required" data-ru;e-number="true">
+                                        <i class="far fa-phone"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label>Email</label> <span class="error">*</span>
+                                        <input type="email" class="form-control" id="email" name="email" readonly
+                                               placeholder="Your Email" required>
+                                        <i class="far fa-envelope"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Pick Up Location</label> <span class="error">*</span>
+                                        <input type="text" class="form-control" placeholder="Pick Up Location"
+                                               name="pick_up" required data-msg-required="Pick Up Location is required">
+                                        <i class="far fa-location-dot"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Drop Off Location</label> <span class="error">*</span>
+                                        <input type="text" class="form-control" name="drop_off"
+                                               placeholder="Drop Off Location">
+                                        <i class="far fa-location-dot"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>City</label> <span class="error">*</span>
+                                        <div id="cities"></div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Passengers</label> <span class="error">*</span>
+                                        <input type="text" maxlength="1" class="form-control" name="no_passenger"
+                                               placeholder="Passengers" required data-rule-number="true"
+                                               data-msg-required="No. of passengers are required">
+                                        <i class="far fa-user-tie"></i>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Cab Type</label> <span class="error">*</span>
+                                        <div id="ctype"></div>
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Pick Up Date</label> <span class="error">*</span>
+                                        <input type="text" id="dt" name="pick_date" class="form-control"
+                                               placeholder="MM/DD/YY">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Pick Up Time(Approx.)</label> <span class="error">*</span>
+                                        <select class="form-control" name="pick_time" required>
+                                            <option value="">00:00 AM</option>
+                                            <option>6:00 AM</option>
+                                            <option>7:00 AM</option>
+                                            <option>8:00 AM</option>
+                                            <option>9:00 AM</option>
+                                            <option>10:00 AM</option>
+                                            <option>11:00 AM</option>
+                                            <option>12:00 PM</option>
+                                            <option>01:00 PM</option>
+                                            <option>02:00 PM</option>
+                                            <option>03:00 PM</option>
+                                            <option>04:00 PM</option>
+                                            <option>05:00 PM</option>
+                                            <option>06:00 PM</option>
+                                            <option>07:00 PM</option>
+                                            <option>08:00 PM</option>
+                                            <option>09:00 PM</option>
+                                            <option>10:00 PM</option>
+                                            <option>11:00 PM</option>
+                                            <option>12:00 PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Driver Age</label> <span class="error">*</span>
+                                        <select class="select" name="dage">
+                                            <option value="">Choose Age</option>
+                                            <option value="0">Any Age</option>
+                                            <option>25</option>
+                                            <option>30</option>
+                                            <option>35</option>
+                                            <option>40</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label>Cab Model</label> <span class="error">*</span>
+                                        <div id="cmodel"></div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label>Price</label> <span class="error">*</span>
+                                        <input type="text" id="price" name="price" id="price" readonly
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <label>Payment Type</label> <span class="error">*</span>
+                                        <select name="pay_type" class="form-control">
+                                            <option>Online</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label>Your Message</label>
+                                        <textarea class="form-control" rows="5" placeholder="Write Your Message"
+                                                  required name="msg"></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" checked type="checkbox" id="condition">
+                                        <label class="form-check-label" for="condition">
+                                            By using this form you agree to our terms & conditions.
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3 mx-auto">
+                                    <button class="theme-btn" type="button" onclick="payment()">Book Your Taxi <i
+                                                class="fas fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<%- include('footer') %>
+<%- include('footer-scripts') %>
+<script src="/dist/jquery.validate.js"></script>
+</body>
+<script>
+    function car_type() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.response != "") {
+                    var output = `<select class="select form-control" id="cartype" name="cartype">
+                    <option value=''>Select:</option>`;
+                    var data = JSON.parse(this.response);
+                    for (let i = 0; i < data.length; i++) {
+                        output += `<option>${data[i].type}</option>`;
+                    }
+                    output += `</select>`;
+                    document.getElementById("ctype").innerHTML = output;
+                }
+            }
+        }
+        http.open("get", "/admin/getTaxiType", true);
+        http.send();
+    }
+
+    function carmodel() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var output = `<select class="select form-control" name="carmodal" required onchange="get_price(this.value)" data-msg-required="Car Modal is required">
+<option value=''>Choose Model:</option>`;
+                var data = JSON.parse(this.response);
+                for (let i = 0; i < data.length; i++) {
+                    output += `<option value="${data[i].id}">${data[i].model}</option>`;
+                }
+                output += '</select>';
+                document.getElementById("cmodel").innerHTML = output;
+            }
+        }
+        http.open("get", "/user/getcarmodel", true);
+        http.send();
+    }
+
+    function get_user() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.response != "") {
+                    var data = JSON.parse(this.response);
+                    document.getElementById("fullname").value = data[0].fullname;
+                    document.getElementById("phone").value = data[0].phone;
+                    document.getElementById("email").value = data[0].email;
+                }
+            }
+        }
+        http.open("get", "/user/get-user-details", true);
+        http.send();
+    }
+
+    function get_cities() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                if (this.response != "") {
+                    var data = JSON.parse(this.response);
+                    var output = `<select name="city" id="city" class="form-control" required data-msg-required="City is required">
+<option value="">Select:</option>`;
+                    for (let i = 0; i < data.length; i++) {
+                        output += `<option value='${data[i].cityid}'>${data[i].cityname}</option>`;
+                    }
+                    output += `</select>`;
+                    // alert(output);
+                    document.getElementById("cities").innerHTML = output;
+                }
+            }
+        }
+        http.open("get", "/admin/viewcity", true);
+        http.send();
+    }
+
+    function get_price(car) {
+        if (car != "") {
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("price").value = this.response;
+                }
+            }
+            http.open("get", "/user/get_price?c=" + car, true);
+            http.send();
+        } else {
+            document.getElementById("price").value = '';
+        }
+    }
+
+    function book_cab() {
+        $("#form").validate();
+        if ($("#form").valid()) {
+            var condition = document.getElementById("condition");
+            //alert(condition.checked)
+            if (condition.checked) {
+                var elements = document.getElementById("form").elements;
+                var formdata = new FormData();
+                for (let i = 0; i < elements.length; i++) {
+                    if (elements[i].type != "button" && elements[i].type != "checkbox") {
+                        formdata.append(elements[i].name, elements[i].value);
+                        //alert(elements[i].name+" " +elements[i].value);
+                    }
+                }
+                var http = new XMLHttpRequest();
+                http.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        alert(this.response);
+                    }
+                }
+                http.open("post", "/user/book-form", true);
+                http.send(formdata);
+            }
+        } else {
+
+            Swal.fire({
+                position: 'center',
+                icon: 'error',
+                title: 'Please fill all the required filds',
+                showConfirmButton: false,
+                timer: 1500
+            })
+        }
+    }
+
+    $(document).ready(function () {
+        $("#dt").datepicker({
+            minDate: 0,
+            dateFormat: 'yy-mm-dd'
+        });
+    })
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" rel="stylesheet">
+<script>
+    const payment = () => {
+        $("#form").validate();
+        if ($("#form").valid()) {
+            var condition = document.getElementById("condition");
+            // alert(condition.checked)
+            if (condition.checked) {
+
+                var amount = document.getElementById("price").value;
+                let options = {
+                    "key": "rzp_test_dRWiKHS7zr2Gki",
+                    "amount": amount * 100,
+                    "name": "Taxica",
+                    "description": "Payment Gateway",
+                    "image": "/assets/img/logo/logo.png",
+                    "handler": function (response) {
+                        PlaceOrder(response.razorpay_payment_id, amount);
+                        // PlaceOrder(`'${response.razorpay_payment_id}'`, amount, book_id);
+                    },
+                    "prefill": {
+                        "name": "",
+                        "email": ""
+                    },
+                    "notes": {
+                        "address": ""
+                    },
+                    "theme": {
+                        "color": "#942436"
+                    }
+                };
+
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'Please fill all the required filds',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        }
+    }
+
+    const PlaceOrder = (ref_id, amount) => {
+        alert(ref_id + " " + amount);
+        var elements = document.getElementById("form").elements;
+        var formdata = new FormData();
+        formdata.append("amount", amount);
+        formdata.append("ref_id", ref_id);
+        for (let i = 0; i < elements.length; i++) {
+            if (elements[i].type != "button" && elements[i].type != "checkbox") {
+                formdata.append(elements[i].name, elements[i].value);
+               // alert(elements[i].name + " " + elements[i].value);
+            }
+        }
+
+       // alert("append");
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                //alert(this.response);
+                if (this.response == "booked") {
+                    window.location.href = "/user/thank-you";
+                } else {
+                    alert("Internal Server Error");
+                }
+            }
+        }
+        http.open("post", "/user/book-form", true);
+        http.send(formdata);
+    }
+</script>
+</html>

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Categories </title>
+    <%- include('headerfiles') %>
+</head>
+<body>
+<%- include('adminheader') %>
+<%- //include("navbar")  %>
+<div class="container mb-5">
+    <form id="form">
+        <div class="mb-2">
+            <label for="taxitype" class="form-label">Enter Taxi Model Name : </label>
+            <input type="text" name="taxitype" id="taxitype" class="form-control" required
+                   data-msg-required="Taxi Name is Required"/>
+        </div>
+
+        <div class="mb-2">
+            <button class="btn btn-primary" id="btn" type="button" onclick="taximodel()">SUBMIT</button>
+            <div id="output"></div>
+        </div>
+    </form>
+
+</div>
+<%- include("footer") %>
+<%- include("footer-scripts") %>
+<script src="/dist/jquery.validate.js"></script>
+<script>
+    function taximodel() {
+        // console.log("********")
+        $("#form").validate();
+        if ($("#form").valid()) {
+            let formcntrls = document.getElementById("form").elements;
+            let data = new FormData();
+            for (let i = 0; i < formcntrls.length; i++) {
+                if (formcntrls[i].type != "button")
+                    data.append(formcntrls[i].name, formcntrls[i].value);
+                // alert(formcntrls[i].name + " " + formcntrls[i].value)
+            }
+            // console.log(data);
+            let http = new XMLHttpRequest();
+            http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.response);
+                    if (this.response == "success") {
+                        document.getElementById("form").reset();
+                        document.getElementById("output").innerHTML = "<div class='alert alert-success'>name entered</div>"
+                    } else {
+                        document.getElementById("output").innerHTML = "<div class='alert alert-danger'>Name of Taxi does not entered</div>"
+                    }
+                }
+            }
+            http.open("post", "/admin/taxitypeaction", true);
+            http.send(data)
+        } else {
+            document.getElementById("btn").value = "Loading....";
+        }
+    }
+</script>
+</body>
+</html>

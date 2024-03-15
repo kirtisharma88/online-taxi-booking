@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Taxica - Book a ride</title>
+    <%- include('headerfiles') %>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body onload="car_type();carmodel();get_user();get_cities();">
+<%- include('userheader') %>
+
+<main class="main">
+
+    <div class="site-breadcrumb" style="background: url(/assets/img/breadcrumb/01.jpg)">
+        <div class="container">
+            <h2 class="breadcrumb-title">Booking Completed</h2>
+            <ul class="breadcrumb-menu">
+                <li><a href="/user/">Home</a></li>
+                <li class="active">Booking Done</li>
+            </ul>
+        </div>
+    </div>
+    <div class="book-ride py-120">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 mx-auto">
+                    <div class="booking-form">
+                        <div class="book-ride-head">
+                            <img src="/img/thank-you.gif" height="120" width="50%"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<%- include('footer') %>
+<%- include('footer-scripts') %>
+</body>
+</html>

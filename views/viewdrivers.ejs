@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title> View Drivers</title>
+    <%- include("headerfiles") %>
+
+</head>
+<body onload="viewdrivers()">
+<%- include("adminheader") %>
+<section class="inner-banner">
+    <div class="container">
+        <h2>Manage Drivers</h2>
+    </div>
+</section>
+
+<div class="container">
+    <br>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal"> Add Driver
+    </button>
+    <div id="output"></div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" arial-labelledby="exampleModalLabel" arial-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Add New Driver</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" arial-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <form id="form">
+                    <div class="row">
+                        <div class="col-md-6 mt-2">
+                            <label for="driver"> Enter Driver Name:</label>
+                            <input type="text" name="driver" id="driver" class="form-control" required
+                                   data-msg-required="Driver Name is Required"/>
+
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="driver"> Enter Contact Details:</label>
+                            <input type="text" name="phone" id="phone" class="form-control" required/>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="driver"> Enter UserName for Drivers:</label>
+                            <input type="text" name="username" id="username" class="form-control" required/>
+                        </div>
+                        <div class="col-md-6 mt-2">
+                            <label for="driver"> Enter Email for Drivers:</label>
+                            <input type="text" name="email" id="email" class="form-control" required/>
+                        </div>
+
+                        <div class="col-md-6 mt-2">
+                            <label for="driver"> Set Password for Drivers:</label>
+                            <input type="password" name="password" id="password" class="form-control" required/>
+                        </div>
+
+                        <div class="col-md-6 mt-2">
+
+                            <button type="button" onclick="drivers()" class="btn btn-primary btn-lg">Submit</button>
+                        </div>
+                        <div id="output"></div>
+
+                    </div>
+
+                </form>
+                <div id="response"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<%-include("footer")%>
+<%-include("footer-scripts")%>
+<script src="/dist/jquery.validate.js"></script>
+
+<script>
+    let drivers = () => {
+        $("form").validate();
+        if ($("form").valid()) {
+            var driver_name = document.getElementById("driver").value;
+            var contact_details = document.getElementById("phone").value;
+            var username = document.getElementById("username").value;
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    console.log(this.response)
+                    if (this.response === "inserted") {
+                        viewdrivers();
+                        document.getElementById("form").reset();
+                        document.getElementById("response").innerHTML = "driver added successfully";
+                    } else {
+                        alert("Driver Already Exist");
+                    }
+                }
+            }
+            http.open("get", "/admin/driversaction?driver=" + driver_name + "&phone=" + contact_details + "&username=" + username + "" + "&email=" + email+  "" + "&password=" + password, true);
+            http.send();
+        }
+    }
+
+    function viewdrivers() {
+        var http = new XMLHttpRequest();
+        http.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                // console.log(this.response);
+                let output = '<div class="table-responsive"><table class="table">' +
+                    '<tr class="text-center"> <th> Sr.No.</th><th>Driver Name</th><th> Contact Details</th><th> Username</th><th>Email</th></tr>';
+                if (this.response != "no data found") {
+                    let srno = 1;
+                    let data = JSON.parse(this.response);
+                    for (let i = 0; i < data.length; i++) {
+                        output += '<tr class="text-center">' +
+                            '<td>' + (i + 1) + '</td>' +
+                            '<td>' + data[i].driver + '</td>' +
+                            '<td>' + data[i].phone + '</td>' +
+                            '<td>' + data[i].username + '</td>' +
+                            '<td>' + data[i].email + '</td>' +
+                            '<tr>'
+                        srno++;
+                    }
+                }
+                output += '</table></div>';
+                document.getElementById("output").innerHTML = output;
+            }
+        }
+        http.open("get", "/admin/viewdriversaction", true);
+        http.send();
+    }
+
+</script>
+
+</body>
+</html>
